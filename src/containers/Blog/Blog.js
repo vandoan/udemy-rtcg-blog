@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import Posts from './../Posts/Posts';
 import './Blog.css';
-import { Route, NavLink } from 'react-router-dom';
-import NewPost from './NewPost/NewPost'
+import { Route, NavLink, Switch, Redirect } from 'react-router-dom';
+// import NewPost from './NewPost/NewPost'
+import asyncComponent from '../../hoc/asyncComponent';
+
+const AsyncNewPost = asyncComponent(() => {
+    return import('./NewPost/NewPost');
+});
 
 class Blog extends Component {
-
+    state = {
+        auth: true
+    }
     render () {
 
         return (
@@ -20,16 +27,21 @@ class Blog extends Component {
                                     color: 'blueviolet',
                                     textDecoration: 'underline'
                                 }}
-                                to="/">Home</NavLink></li>
+                                to="/posts/">Posts</NavLink></li>
                             <li><NavLink to={{
                                 pathname:"/new-post"}}
                                 >New Post</NavLink></li>
                         </ul>
                     </nav>
                 </header>
-                {/* <Route path='/' exact render={ () => <h1>Home</h1>} ></Route> */}
-                <Route path='/' exact component={Posts} />
-                <Route path='/new-post' exact component={NewPost} />
+                <Switch>
+                    {this.state ? <Route path='/new-post' exact component={AsyncNewPost} /> : null}
+                    <Route path='/posts' component={Posts} />
+                    <Route render={() => <h1>Not found</h1>} />
+                    {/* <Redirect from='/' to='/posts' /> */}
+                    {/* <Route path='/' component={Posts} /> */}
+
+                </Switch>
 
                 
                 {/* <section>
